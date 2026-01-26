@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keepa Countable</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body data-theme="nature">
+
+    <!-- Header Controls -->
+    <div class="header-controls">
+        <div id="global-user-stats" class="user-stats-pill"
+            style="display: flex; margin-right: 1rem; padding: 0.5rem 1rem; border-radius: 20px; align-items: center; gap: 0.8rem; background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
+            <div class="stat-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-trophy" style="color: #fbbf24;"></i>
+                <span id="global-rank" style="font-weight: 700; font-size: 0.9rem;">Rank 1</span>
+            </div>
+            <div style="width: 1px; height: 16px; background: var(--text-secondary); opacity: 0.3;"></div>
+            <div class="stat-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-bolt" style="color: #a855f7;"></i>
+                <span id="global-xp" style="font-weight: 700; font-size: 0.9rem;">0 XP</span>
+            </div>
+        </div>
+        <button id="settings-btn" class="icon-btn" title="Settings">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Appearance</h2>
+                <button id="close-settings" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="setting-group">
+                <h3>Color Theme</h3>
+                <div class="theme-grid">
+                    <button class="theme-option" data-theme="nature"
+                        style="background: linear-gradient(135deg, #86efac, #3b82f6);" title="Nature (Light)"></button>
+                    <button class="theme-option" data-theme="ocean"
+                        style="background: linear-gradient(135deg, #06b6d4, #3b82f6);" title="Ocean (Blue)"></button>
+                    <button class="theme-option" data-theme="sunset"
+                        style="background: linear-gradient(135deg, #f9a8d4, #f43f5e);"
+                        title="Sunset (Pink/Orange)"></button>
+                    <button class="theme-option" data-theme="lavender"
+                        style="background: linear-gradient(135deg, #d8b4fe, #a855f7);"
+                        title="Lavender (Purple)"></button>
+                    <button class="theme-option" data-theme="night"
+                        style="background: linear-gradient(135deg, #1e293b, #0f172a);" title="Night (Dark)"></button>
+                    <button class="theme-option" data-theme="forest"
+                        style="background: linear-gradient(135deg, #22c55e, #052e16);"
+                        title="Forest (Dark Green)"></button>
+                    <button class="theme-option" data-theme="crimson"
+                        style="background: linear-gradient(135deg, #ef4444, #450a0a);"
+                        title="Crimson (Dark Red)"></button>
+                    <button class="theme-option" data-theme="midnight"
+                        style="background: linear-gradient(135deg, #6366f1, #1e1b4b);"
+                        title="Midnight (Dark Indigo)"></button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>Wallpaper</h3>
+                <div class="wallpaper-options">
+                    <button class="wallpaper-btn active" data-wallpaper="">None</button>
+                    <button class="wallpaper-btn" data-wallpaper="wallpapers/lighthouse.jpg">Lighthouse</button>
+                </div>
+                <div class="custom-wallpaper">
+                    <label>Custom Image (Path):</label>
+                    <input type="text" id="custom-wallpaper-input" placeholder="e.g. wallpapers/myimage.jpg"
+                        maxlength="200" autocomplete="off">
+                    <button id="apply-custom-wallpaper" class="secondary-btn">Apply</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>Custom Quotes</h3>
+                <div class="custom-wallpaper">
+                    <label>Add New Quote:</label>
+                    <input type="text" id="new-quote-input" placeholder="Enter your motivational quote..."
+                        maxlength="150">
+                    <button id="add-quote-btn" class="secondary-btn">Add Quote</button>
+                    <ul id="custom-quote-list" class="quote-list"></ul>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>Data Management</h3>
+                <div class="data-actions">
+                    <button id="export-data-btn" class="secondary-btn"><i class="fa-solid fa-download"></i> Export
+                        Data</button>
+                    <button id="import-data-btn" class="secondary-btn"><i class="fa-solid fa-upload"></i> Import
+                        Data</button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Blobs (Hidden when wallpaper active) -->
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="app-header">
+            <h1>Keepa Countable</h1>
+            <p class="gradient-text" style="font-weight: 600;">Master your time, conquer your tasks.</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="app-nav glass-panel">
+            <button class="nav-btn active" data-tab="tasks"><i class="fa-solid fa-list-check"></i> Tasks</button>
+            <button class="nav-btn" data-tab="timer"><i class="fa-solid fa-stopwatch"></i> Timer</button>
+            <button class="nav-btn" data-tab="completed"><i class="fa-solid fa-check-double"></i> Completed</button>
+            <button class="nav-btn" data-tab="habits"><i class="fa-solid fa-fire"></i> Habits</button>
+            <button class="nav-btn" data-tab="timelog"><i class="fa-solid fa-chart-pie"></i> Time Log</button>
+            <button class="nav-btn" data-tab="profile"><i class="fa-solid fa-user"></i> Profile</button>
+        </nav>
+
+        <!-- VIEWS Container -->
+        <main id="app-content">
+
+            <!-- 1. TASKS View -->
+            <div id="view-tasks" class="view-section active">
+                <section class="stats-container">
+                    <div class="stat-card success">
+                        <div class="stat-icon"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>On Time</h3>
+                            <p id="stats-ontime">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card failure">
+                        <div class="stat-icon"><i class="fa-solid fa-times-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>Missed</h3>
+                            <p id="stats-missed">0</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="input-section glass-panel">
+                    <div class="input-group">
+                        <label for="task-desc">New Task</label>
+                        <input type="text" id="task-desc" placeholder="What needs to be done?" autocomplete="off"
+                            maxlength="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="task-tags">Tags (comma-separated)</label>
+                        <input type="text" id="task-tags" placeholder="e.g. physics, chapter 2, homework"
+                            autocomplete="off" maxlength="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="task-deadline">Deadline</label>
+                        <input type="datetime-local" id="task-deadline">
+                    </div>
+                    <button id="add-btn" class="primary-btn"><i class="fa-solid fa-plus"></i> Add Task</button>
+                </section>
+
+                <section class="tasks-section">
+                    <h2 class="section-title gradient-text">Your Missions</h2>
+                    <ul id="task-list" class="task-list">
+                        <!-- Tasks injected here -->
+                    </ul>
+                </section>
+            </div>
+
+            <!-- 2. TIMER View -->
+            <div id="view-timer" class="view-section" style="display: none;">
+                <div class="timer-page glass-panel">
+                    <h2 class="section-title gradient-text"><i class="fa-solid fa-stopwatch"></i> Focus Timer</h2>
+
+                    <div class="timer-ring-container">
+                        <svg class="timer-ring" viewBox="0 0 120 120">
+                            <circle class="timer-ring-bg" cx="60" cy="60" r="54" />
+                            <circle id="timer-ring-progress" class="timer-ring-progress" cx="60" cy="60" r="54" />
+                        </svg>
+                        <div class="timer-display">
+                            <span id="timer-minutes">25</span>:<span id="timer-seconds">00</span>
+                        </div>
+                    </div>
+
+                    <div class="timer-duration-select">
+                        <label>Duration:</label>
+                        <select id="timer-duration">
+                            <option value="10">10 min</option>
+                            <option value="15">15 min</option>
+                            <option value="20">20 min</option>
+                            <option value="25" selected>25 min</option>
+                            <option value="30">30 min</option>
+                            <option value="45">45 min</option>
+                            <option value="60">60 min</option>
+                            <option value="90">90 min</option>
+                            <option value="120">120 min</option>
+                            <option value="150">150 min</option>
+                            <option value="180">180 min</option>
+                            <option value="200">200 min</option>
+                        </select>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button id="timer-start" class="primary-btn"><i class="fa-solid fa-play"></i> Start</button>
+                        <button id="timer-pause" class="secondary-btn" style="display:none;"><i
+                                class="fa-solid fa-pause"></i> Pause</button>
+                        <button id="timer-reset" class="secondary-btn"><i class="fa-solid fa-rotate-left"></i>
+                            Reset</button>
+                    </div>
+
+                    <div class="timer-quote-display">
+                        <p id="timer-quote">"Stay focused and never give up."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. HABITS View -->
+            <div id="view-habits" class="view-section" style="display: none;">
+                <section class="input-section glass-panel">
+                    <h3>Create New Habit</h3>
+                    <div class="input-row">
+                        <div class="input-group" style="flex-grow: 1;">
+                            <input type="text" id="habit-name" placeholder="Habit Name (e.g. Read Book)" maxlength="30">
+                        </div>
+                        <div class="input-group checkbox-color">
+                            <input type="color" id="habit-color" value="#6366f1" title="Choose Habit Color">
+                        </div>
+                    </div>
+                    <button id="add-habit-btn" class="primary-btn"><i class="fa-solid fa-plus"></i> Create
+                        Habit</button>
+                </section>
+
+                <div id="habits-container" class="habits-list">
+                    <!-- Habits injected here -->
+                </div>
+            </div>
+
+            <!-- 3. TIME LOG View -->
+            <div id="view-timelog" class="view-section" style="display: none;">
+                <section class="input-section glass-panel">
+                    <h3>Log Activity for Today</h3>
+                    <div class="input-group">
+                        <label>Activity Name</label>
+                        <input type="text" id="log-activity" placeholder="e.g. Coding, Gaming, Sleep" maxlength="50"
+                            autocomplete="off">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Duration (Hours)</label>
+                            <input type="number" id="log-duration" placeholder="2.5" step="0.5" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>Color Tag</label>
+                            <input type="color" id="log-color" value="#10b981">
+                        </div>
+                    </div>
+                    <button id="add-log-btn" class="primary-btn"><i class="fa-solid fa-clock"></i> Log Time</button>
+                </section>
+
+                <div class="glass-panel chart-panel">
+                    <h3>Today's Breakdown</h3>
+                    <div class="chart-container" style="position: relative; height:300px; width:100%">
+                        <canvas id="todayChart"></canvas>
+                    </div>
+                    <ul id="today-legend" class="custom-legend"></ul>
+                </div>
+
+                <button id="view-history-btn" class="secondary-btn" style="width:100%; margin-top:1rem;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> View Past Days History
+                </button>
+            </div>
+
+            <!-- 4. HISTORY View -->
+            <div id="view-history" class="view-section" style="display: none;">
+                <div class="section-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <button id="back-to-timelog" class="btn-icon" style="background: var(--glass-bg);"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="section-title gradient-text" style="margin: 0;">Past Days</h2>
+                </div>
+                <div id="history-grid" class="history-grid">
+                    <!-- Past days charts injected here -->
+                </div>
+            </div>
+
+            <!-- 5. COMPLETED TASKS View -->
+            <div id="view-completed" class="view-section" style="display: none;">
+                <h2 class="section-title gradient-text">Completed Missions</h2>
+                <div class="search-bar glass-panel" style="padding: 1rem; margin-bottom: 1rem;">
+                    <input type="text" id="completed-search" placeholder="Search by tags (e.g. physics, 2026-01-26)"
+                        style="width: 100%;" maxlength="50" autocomplete="off">
+                </div>
+                <ul id="completed-task-list" class="task-list">
+                    <!-- Completed tasks injected here -->
+                </ul>
+            </div>
+
+            <!-- 6. PROFILE View -->
+            <div id="view-profile" class="view-section" style="display: none;">
+                <div class="profile-header glass-panel">
+                    <div class="rank-display">
+                        <img id="rank-image" src="" alt="Rank Badge" class="rank-badge">
+                        <div class="rank-info">
+                            <h2 id="current-rank">Rank 1</h2>
+                            <p id="streak-display">Current Streak: 0 days</p>
+                            <p id="multiplier-display">XP Multiplier: 1.0x</p>
+                        </div>
+                    </div>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar">
+                            <div id="xp-fill" class="xp-fill" style="width: 0%;"></div>
+                        </div>
+                        <p id="xp-text">0 XP</p>
+                    </div>
+                </div>
+
+                <div class="profile-actions glass-panel">
+                    <h3>Streak Protection</h3>
+                    <div class="action-buttons">
+                        <button id="freeze-streak-btn" class="secondary-btn"><i class="fa-solid fa-snowflake"></i>
+                            Freeze Streak (400 XP)</button>
+                        <button id="reduce-penalty-btn" class="secondary-btn"><i class="fa-solid fa-shield"></i> Reduce
+                            Penalty (200 XP)</button>
+                    </div>
+                </div>
+
+                <div class="badges-section glass-panel">
+                    <h3>Badges Earned</h3>
+                    <div id="badges-grid" class="badges-grid">
+                        <!-- Badges injected here -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Footer Quote Bar -->
+    <div id="quote-container" class="quote-footer">
+        <p id="quote-text"></p>
+        <p class="footer-credit">Made by Wali</p>
+    </div>
+
+    <!-- Chart.js for Pie Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
