@@ -753,16 +753,22 @@ function addTimeLog() {
     if (!activity || !duration || duration <= 0) return alert('Invalid input');
     if (duration > 24) return alert('Cannot log more than 24 hours at once.');
 
-
     const today = getLocalDate();
     if (!state.timeLogs[today]) state.timeLogs[today] = [];
 
-    state.timeLogs[today].push({
-        id: Date.now(),
-        activity,
-        duration,
-        color
-    });
+    // Check for existing entry with same name
+    const existingEntry = state.timeLogs[today].find(log => log.activity.toLowerCase() === activity.toLowerCase());
+
+    if (existingEntry) {
+        existingEntry.duration += duration;
+    } else {
+        state.timeLogs[today].push({
+            id: Date.now(),
+            activity,
+            duration,
+            color
+        });
+    }
 
     // Update daily minutes 
     const minutes = Math.round(duration * 60);
@@ -789,14 +795,19 @@ function renderTimeLog() {
     const data = logs.map(l => l.duration);
     const colors = logs.map(l => l.color);
 
+    // Calculate remaining time for 24h day
+    const totalDuration = data.reduce((a, b) => a + b, 0);
+    const remaining = Math.max(0, 24 - totalDuration);
+
+    if (remaining > 0) {
+        labels.push('Remaining');
+        data.push(remaining);
+        colors.push('rgba(255, 255, 255, 0.1)'); // Subtle white for empty space
+    }
+
     if (todayChartInstance) {
         todayChartInstance.destroy();
         todayChartInstance = null;
-    }
-
-    if (logs.length === 0) {
-        dom.todayLegend.innerHTML = '<p style="color:var(--text-secondary); padding:1rem;">No activities logged today.</p>';
-        return;
     }
 
     const ctx = dom.todayChartCanvas.getContext('2d');
@@ -813,17 +824,32 @@ function renderTimeLog() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } }
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            return `${label}: ${Math.round(value * 100) / 100}h`;
+                        }
+                    }
+                }
+            }
         }
     });
 
-    dom.todayLegend.innerHTML = logs.map(log => `
-        <li class="legend-item">
-            <span class="legend-color" style="background-color: ${log.color}"></span>
-            ${escapeHtml(log.activity)} (${log.duration}h)
-            <button onclick="deleteLog('${today}', ${log.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;margin-left:5px;">×</button>
-        </li>
-    `).join('');
+    if (logs.length === 0) {
+        dom.todayLegend.innerHTML = '<p style="color:var(--text-secondary); padding:1rem;">Start logging to fill your 24h day.</p>';
+    } else {
+        dom.todayLegend.innerHTML = logs.map(log => `
+            <li class="legend-item">
+                <span class="legend-color" style="background-color: ${log.color}"></span>
+                ${escapeHtml(log.activity)} (${parseFloat(log.duration.toFixed(2))}h)
+                <button onclick="deleteLog('${today}', ${log.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;margin-left:5px;">×</button>
+            </li>
+        `).join('');
+    }
 }
 
 function deleteLog(date, id) {
@@ -1308,34 +1334,13 @@ function completeTimer() {
 
     playSound('end');
 
-    // Award XP and log time
     const minutesWorked = Math.round(state.timer.totalSeconds / 60);
-    const today = getLocalDate();
-
-    // Update daily minutes
-    if (!state.gamification.dailyMinutes[today]) {
-        state.gamification.dailyMinutes[today] = 0;
-    }
-    state.gamification.dailyMinutes[today] += minutesWorked;
-
-    // Award XP
-    awardXP(minutesWorked);
-
-    // Log to time log
-    if (!state.timeLogs[today]) state.timeLogs[today] = [];
-    state.timeLogs[today].push({
-        id: Date.now(),
-        activity: 'Focus Session',
-        duration: minutesWorked / 60, // Convert to hours
-        color: '#a855f7' // Purple for Pomodoro sessions
-    });
 
     saveData();
 
-    alert(`🎉 Great work! You completed ${minutesWorked} minutes of focused work and earned ${Math.floor(minutesWorked * calculateMultiplier(state.gamification.currentStreak))} XP!`);
+    alert(`🎉 Timer Finished! You focused for ${minutesWorked} minutes.`);
 
     resetTimer();
-    renderProfile();
 }
 
 // Check for active timer on load
