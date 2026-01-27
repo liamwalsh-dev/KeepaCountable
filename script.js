@@ -751,6 +751,8 @@ function addTimeLog() {
     const color = dom.logColor ? dom.logColor.value : '#10b981';
 
     if (!activity || !duration || duration <= 0) return alert('Invalid input');
+    if (duration > 24) return alert('Cannot log more than 24 hours at once.');
+
 
     const today = getLocalDate();
     if (!state.timeLogs[today]) state.timeLogs[today] = [];
