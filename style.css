@@ -24,7 +24,8 @@
     --footer-bg: #1e293b;
     --footer-text: #f8fafc;
     --footer-credit: #94a3b8;
-    --timer-color: #a855f7; /* Default Purple */
+    --timer-color: #a855f7;
+    /* Default Purple */
 }
 
 /* THEMES */
@@ -232,13 +233,14 @@
 
 /* Chart Container Shadow */
 .chart-container {
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
 }
 
 /* Fallback gradient for SVG - Overridden */
 .timer-ring-progress {
     stroke: var(--timer-color);
 }
+
 /* Header Controls Fix */
 .header-controls {
     position: absolute;
@@ -1338,17 +1340,12 @@ input:focus {
 
 .timer-ring-progress {
     fill: none;
-    stroke: url(#timer-gradient);
+    stroke: var(--timer-color);
     stroke-width: 8;
     stroke-linecap: round;
     stroke-dasharray: 339.292;
     stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.5s ease;
-}
-
-/* Fallback gradient for SVG */
-.timer-ring-progress {
-    stroke: #a855f7;
+    transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
 }
 
 .timer-display {
