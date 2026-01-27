@@ -1341,11 +1341,45 @@ input:focus {
 .timer-ring-progress {
     fill: none;
     stroke: var(--timer-color);
+    /* Fallback */
     stroke-width: 8;
     stroke-linecap: round;
     stroke-dasharray: 339.292;
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+}
+
+/* Explicit Overrides for Stability */
+[data-theme="nature"] .timer-ring-progress {
+    stroke: #22c55e;
+}
+
+[data-theme="ocean"] .timer-ring-progress {
+    stroke: #06b6d4;
+}
+
+[data-theme="sunset"] .timer-ring-progress {
+    stroke: #db2777;
+}
+
+[data-theme="lavender"] .timer-ring-progress {
+    stroke: #a855f7;
+}
+
+[data-theme="night"] .timer-ring-progress {
+    stroke: #8b5cf6;
+}
+
+[data-theme="forest"] .timer-ring-progress {
+    stroke: #22c55e;
+}
+
+[data-theme="crimson"] .timer-ring-progress {
+    stroke: #ef4444;
+}
+
+[data-theme="midnight"] .timer-ring-progress {
+    stroke: #818cf8;
 }
 
 .timer-display {
