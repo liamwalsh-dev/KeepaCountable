@@ -891,22 +891,47 @@ function renderHistory() {
         `;
         dom.historyGrid.appendChild(card);
 
+        // Prepare 24h Data
+        const labels = logs.map(l => l.activity);
+        const data = logs.map(l => l.duration);
+        const colors = logs.map(l => l.color);
+
+        const totalDuration = data.reduce((a, b) => a + b, 0);
+        const remaining = Math.max(0, 24 - totalDuration);
+
+        if (remaining > 0) {
+            labels.push('Remaining');
+            data.push(remaining);
+            colors.push('rgba(255, 255, 255, 0.1)');
+        }
+
         setTimeout(() => {
             const ctx = document.getElementById(canvasId).getContext('2d');
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: logs.map(l => l.activity),
+                    labels: labels,
                     datasets: [{
-                        data: logs.map(l => l.duration),
-                        backgroundColor: logs.map(l => l.color),
+                        data: data,
+                        backgroundColor: colors,
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return `${label}: ${Math.round(value * 100) / 100}h`;
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }, 0);

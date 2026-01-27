@@ -24,6 +24,7 @@
     --footer-bg: #1e293b;
     --footer-text: #f8fafc;
     --footer-credit: #94a3b8;
+    --timer-color: #a855f7; /* Default Purple */
 }
 
 /* THEMES */
@@ -49,6 +50,7 @@
     /* Dark Green Text */
     --footer-credit: #166534;
     /* Complimentary/Darker */
+    --timer-color: #22c55e;
 }
 
 /* 2. Ocean (Blue) */
@@ -71,6 +73,7 @@
     --footer-text: #0e7490;
     /* Dark Cyan Text */
     --footer-credit: #155e75;
+    --timer-color: #06b6d4;
 }
 
 /* 3. Sunset (Warm/Pink) */
@@ -93,6 +96,7 @@
     --footer-text: #be123c;
     /* Dark Pink Text */
     --footer-credit: #9f1239;
+    --timer-color: #db2777;
 }
 
 /* 4. Lavender (Purple) */
@@ -115,6 +119,7 @@
     --footer-text: #7e22ce;
     /* Dark Purple Text */
     --footer-credit: #6b21a8;
+    --timer-color: #a855f7;
 }
 
 /* 5. Night (Dark - Original) */
@@ -137,6 +142,7 @@
     --footer-text: #e2e8f0;
     /* Light Text */
     --footer-credit: #94a3b8;
+    --timer-color: #8b5cf6;
 }
 
 /* 6. Forest (Dark Green) */
@@ -156,6 +162,7 @@
     --footer-bg: #14532d;
     --footer-text: #f0fdf4;
     --footer-credit: #86efac;
+    --timer-color: #22c55e;
 }
 
 /* 7. Crimson (Dark Red) */
@@ -175,6 +182,7 @@
     --footer-bg: #7f1d1d;
     --footer-text: #fef2f2;
     --footer-credit: #fca5a5;
+    --timer-color: #ef4444;
 }
 
 /* 8. Midnight (Dark Purple) */
@@ -194,6 +202,7 @@
     --footer-bg: #312e81;
     --footer-text: #e0e7ff;
     --footer-credit: #a5b4fc;
+    --timer-color: #818cf8;
 }
 
 /* Theme Selection Grid */
@@ -221,6 +230,15 @@
     box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--text-primary);
 }
 
+/* Chart Container Shadow */
+.chart-container {
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+}
+
+/* Fallback gradient for SVG - Overridden */
+.timer-ring-progress {
+    stroke: var(--timer-color);
+}
 /* Header Controls Fix */
 .header-controls {
     position: absolute;
